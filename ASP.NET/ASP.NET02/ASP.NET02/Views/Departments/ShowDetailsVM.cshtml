@@ -1,0 +1,18 @@
+﻿@model DeptWithExtraInfoViewModel
+
+@{
+    ViewData["Title"] = "ShowDetailsVM";
+}
+
+<h1>ShowDetailsVM</h1>
+
+<h2>@Model.DeptName</h2>
+<select class="form form-control">
+    @foreach (var item in Model.StuNames)
+    {
+        <option>
+            @item
+        </option>
+    }
+</select>
+<h2>@Model.State</h2>
