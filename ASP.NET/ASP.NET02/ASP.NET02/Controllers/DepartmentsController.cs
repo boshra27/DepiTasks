@@ -7,10 +7,17 @@ namespace ASP.NET02.Controllers
     public class DepartmentsController : Controller
     {
         DepartmentBL departmentBL = new DepartmentBL();
-        public IActionResult ShowAll()
-        {   
-            List<Departments> Depts =departmentBL.GetAll();
-            return View(nameof(ShowAll),Depts);
+        public IActionResult ShowAll(int page =1)
+        {
+            int pageSize = 5;
+
+            var depts = departmentBL.GetPaged(page, pageSize);
+            int totalCount =departmentBL.GetCount();
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            return View(nameof(ShowAll),depts);
         }
 
         public IActionResult ShowDetails(int id)
@@ -43,12 +50,34 @@ namespace ASP.NET02.Controllers
         [HttpPost]
         public IActionResult SaveAdd(Departments DeptSent)
         {
-            if(DeptSent.Name != null)
+            if(ModelState.IsValid)
             {
                 departmentBL.AddDept(DeptSent);
                 return RedirectToAction(nameof(ShowAll));
             }
             return View(nameof(Add), DeptSent);
+        }
+
+        public IActionResult Edit(int id)
+        {
+            Departments dept = departmentBL.GetById(id);
+
+            return View(nameof(Edit),dept);
+        }
+
+        [HttpPost]
+        public IActionResult SaveEdit(Departments NewDept, int id) 
+        { 
+            Departments OldDept = departmentBL.GetById(id);
+            if(ModelState.IsValid)
+            {
+                OldDept.Id = NewDept.Id;
+                OldDept.Name = NewDept.Name;
+                OldDept.MgrName = NewDept.MgrName;
+                departmentBL.Save();
+                return RedirectToAction(nameof(ShowAll));
+            }
+            return View(nameof(Edit), NewDept);
         }
     }
 }

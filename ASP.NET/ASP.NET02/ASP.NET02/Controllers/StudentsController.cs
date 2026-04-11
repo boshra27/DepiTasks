@@ -11,9 +11,16 @@ namespace ASP.NET02.Controllers
         DepartmentBL departmentBL = new DepartmentBL();
         
         // GETALL()
-        public IActionResult ShowAll()
+        public IActionResult ShowAll(int page = 1)
         {
-            return View(nameof(ShowAll), studentsBL.GetAll());
+            int pageSize = 5;
+            var students = studentsBL.GetPaged(page, pageSize);
+            int totalCount = studentsBL.GetCount();
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            return View(nameof(ShowAll), students);
         }
 
         // GETBYID
@@ -33,14 +40,21 @@ namespace ASP.NET02.Controllers
         }
 
         [HttpPost]
-        public IActionResult SaveAdd(Students Stu)
+        public IActionResult SaveAdd(StudentWithDeptsViewModel StuVM)
         {
-            if(Stu.Name != null && Stu.DepartmentId > 0)
+            if(ModelState.IsValid)
             {
-                studentsBL.AddEmp(Stu);
+                Students stu = new Students()
+                {
+                    Name = StuVM.Name,
+                    Age = StuVM.Age,
+                    DepartmentId = StuVM.DepartmentId
+                };
+                studentsBL.AddEmp(stu);
                 return RedirectToAction(nameof(ShowAll));
             }
-            return View(nameof(Add), Stu);
+            StuVM.Departments = departmentBL.GetAll();
+            return View(nameof(Add), StuVM);
         }
 
         public IActionResult Edit(int id)
@@ -49,7 +63,6 @@ namespace ASP.NET02.Controllers
             List<Departments> DeptList = departmentBL.GetAll();
             StudentWithDeptsViewModel StuVM = new StudentWithDeptsViewModel()
             {
-                Id = student.Id,
                 Name = student.Name,
                 Age = student.Age,
                 DepartmentId = student.DepartmentId,
@@ -60,19 +73,20 @@ namespace ASP.NET02.Controllers
         }
 
         [HttpPost]
-        public IActionResult SaveEdit(Students NewStu, int id)
+        public IActionResult SaveEdit(StudentWithDeptsViewModel NewStuVM, int id)
         {
             Students OldStu = studentsBL.GetById(id);
-            if(NewStu.Name != null)
+            if(ModelState.IsValid)
             {
-                OldStu.Id = NewStu.Id;
-                OldStu.Name = NewStu.Name;
-                OldStu.Age = NewStu.Age;
-                OldStu.DepartmentId = NewStu.DepartmentId;
+                OldStu.Id = NewStuVM.Id;
+                OldStu.Name = NewStuVM.Name;
+                OldStu.Age = NewStuVM.Age;
+                OldStu.DepartmentId = NewStuVM.DepartmentId;
                 studentsBL.Save();
                 return RedirectToAction(nameof(ShowAll));
             }
-            return View(nameof(Edit), NewStu);
+            NewStuVM.Departments = departmentBL.GetAll();
+            return View(nameof(Edit), NewStuVM);
         }
 
         public IActionResult Delete(int id) 

@@ -11,6 +11,19 @@ namespace ASP.NET02.Models
             return context.Departments.ToList();
         }
 
+        public List<Departments> GetPaged(int page, int pageSize)
+        {
+            return context.Departments
+                .Skip((page -1)  * pageSize)
+                .Take(pageSize)
+                .ToList();
+        }
+
+        public int GetCount()
+        {
+            return context.Departments.Count();
+        }
+
         public Departments GetById(int id)
         {
             return context.Departments.Include((d) => d.Students).FirstOrDefault((d) => d.Id == id);
@@ -20,6 +33,11 @@ namespace ASP.NET02.Models
         { 
             context.Departments.Add(dept);
             
+            context.SaveChanges();
+        }
+
+        public void Save()
+        {
             context.SaveChanges();
         }
     }
