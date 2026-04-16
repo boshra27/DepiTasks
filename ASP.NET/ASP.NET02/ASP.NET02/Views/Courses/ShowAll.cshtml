@@ -1,0 +1,30 @@
+﻿@model List<Courses>
+@{
+    ViewData["Title"] = "ShowAll";
+    Layout = "_MyLayout";
+}
+
+<h1 style="color:whitesmoke">Courses</h1>
+
+<a href="/Courses/Add" class=" btn btn-success mt-3 mb-3">New</a>
+<table class="table table-bordered " style="color:whitesmoke">
+    <tr>
+        <td>ID</td>
+        <td>Name</td>
+        <td>Degree</td>
+        <td>MinDegree</td>
+        <td>Department</td>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Id</td>
+            <td>@item.Name</td>
+            <td>@item.Degree</td>
+            <td>@item.MinDegree</td>
+            <td>@item.Departments.Name</td>
+            <td><a asp-controller="Courses" asp-action="Edit" asp-route-id="@item.Id">Edit</a></td>
+            <td><a asp-controller="Courses" asp-action="Delete" asp-route-id="@item.Id">Delete</a></td>
+        </tr>
+    }
+</table>

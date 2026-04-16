@@ -1,0 +1,43 @@
+﻿@model CoursesWithDeptsViewModel
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit Course</h1>
+
+<form asp-action="SaveEdit" asp-controller="Courses">
+    <div>
+        <input asp-for="Id" type="hidden" />
+    </div>
+    <div>
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="Degree"></label>
+        <input asp-for="Degree" class="form form-control" />
+        <span asp-validation-for="Degree" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="MinDegree"></label>
+        <input asp-for="MinDegree" class="form form-control" />
+        <span asp-validation-for="MinDegree" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="DepartmentId"></label>
+        <select asp-for="DepartmentId" asp-items="@(new SelectList(Model.Departments, "Id", "Name", Model.DepartmentId))" class="form-control form">
+            <option value="0">-- Select a Department --</option>
+        </select>
+        <span asp-validation-for="DepartmentId" class="text-danger"></span>
+    </div>
+    <input type="submit" value="Save" class="btn btn-success mt-3 mb-3" />
+</form>
+<a asp-controller="Courses" asp-action="ShowAll">Back To List</a>
+
+
+@section scripts{
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
+
